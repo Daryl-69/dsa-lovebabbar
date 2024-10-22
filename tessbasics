@@ -1,0 +1,519 @@
+THE NO OF NODES ON i level on a tree is (i-1)^2  or  pow(2,i-1)[as a code]
+
+
+// C++ implementation to find the level
+// having maximum number of Nodes
+#include <bits/stdc++.h>
+using namespace std;
+
+/* A binary tree Node has data, pointer
+to left child and a pointer to right
+child */
+struct Node
+{
+	int data;
+	struct Node* left;
+	struct Node* right;
+};
+
+/* Helper function that allocates a new node with the
+given data and NULL left and right pointers. */
+struct Node* newNode(int data)
+{
+	struct Node* node = new Node;
+	node->data = data;
+	node->left = NULL;
+	node->right = NULL;
+	return(node);
+}
+
+// function to find the level
+// having maximum number of Nodes
+int maxNodeLevel(Node *root)
+{
+	if (root == NULL)
+		return -1;
+
+	queue<Node *> q;
+	q.push(root);
+
+	// Current level
+	int level = 0;
+
+	// Maximum Nodes at same level
+	int max = INT_MIN;
+
+	// Level having maximum Nodes
+	int level_no = 0;
+
+	while (1)
+	{
+		// Count Nodes in a level
+		int NodeCount = q.size();
+
+		if (NodeCount == 0)
+			break;
+
+		// If it is maximum till now
+		// Update level_no to current level
+		if (NodeCount > max)
+		{
+			max = NodeCount;
+			level_no = level;
+		}
+
+		// Pop complete current level
+		while (NodeCount > 0)
+		{
+			Node *Node = q.front();
+			q.pop();
+			if (Node->left != NULL)
+				q.push(Node->left);
+			if (Node->right != NULL)
+				q.push(Node->right);
+			NodeCount--;
+		}
+
+		// Increment for next level
+		level++;
+	}
+
+	return level_no;
+}
+
+// Driver program to test above
+int main()
+{
+	// binary tree formation
+	struct Node *root = newNode(2);	 /*	 2	 */
+	root->left	 = newNode(1);	 /*	 / \ */
+	root->right	 = newNode(3);	 /*	 1	 3	 */
+	root->left->left = newNode(4);	 /* / \ \ */
+	root->left->right = newNode(6);	 /* 4	 6 8 */
+	root->right->right = newNode(8); /*	 /	 */
+	root->left->right->left = newNode(5);/*	 5	 */
+
+	printf("Level having maximum number of Nodes : %d",
+			maxNodeLevel(root));
+	return 0;
+}
+
+
+
+
+
+};
+
+// Function to insert a new node in the binary tree
+Node* insert(Node* root, int key) {
+    // If the tree is empty, create the root node
+    if (root == nullptr) {
+        root = new Node(key);
+        return root;
+    }
+    // Create a queue for level order traversal
+    queue<Node*> q;
+    q.push(root);
+
+    // Do level order traversal until we find an empty place
+    while (!q.empty()) {
+        Node* temp = q.front();
+        q.pop();
+
+        // If left child is empty, insert the new node here
+        if (temp->left == nullptr) {
+            temp->left = new Node(key);
+            break;
+        } else {
+            q.push(temp->left);
+        }
+        // If right child is empty, insert the new node here
+        if (temp->right == nullptr) {
+            temp->right = new Node(key);
+            break;
+        } else {
+            q.push(temp->right);
+        }
+    }
+    return root;
+}
+
+void inorder(Node* root) {
+    if (root == nullptr) return;
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+int main() {
+    Node* root = new Node(2);
+    root->left = new Node(3);
+    root->right = new Node(4) ; 
+    root->left->left = new Node(5);
+  
+    cout << "Inorder traversal before insertion: ";
+    inorder(root);
+    cout << endl;
+
+    int key = 6;
+    root = insert(root, key);
+
+    cout << "Inorder traversal after insertion: ";
+    inorder(root);
+    cout << endl;
+
+    return 0;
+}
+
+Output
+Inorder traversal before insertion: 5 3 2 4 
+Inorder traversal after insertion: 5 3 6 2 4 
+3. Searching in Binary Tree
+Searching for a value in a binary tree means looking through the tree to find a node that has that value. Since binary trees do not have a specific order like binary search trees, we typically use any traversal method to search. The most common methods are depth-first search (DFS) and breadth-first search (BFS). In DFS, we start from the root and explore the depth nodes first. In BFS, we explore all the nodes at the present depth level before moving on to the nodes at the next level. We continue this process until we either find the node with the desired value or reach the end of the tree. If the tree is empty or the value isn’t found after exploring all possibilities, we conclude that the value does not exist in the tree.
+
+Here is the implementation of searching in a binary tree using Depth-First Search (DFS)
+
+
+
+
+
+#include <iostream>
+using namespace std;
+
+struct Node{
+    int data;
+    Node *left, *right;
+    Node(int d){
+        data = d;
+        left = right = nullptr;
+    }
+};
+
+// Function to search for a value in the binary tree using DFS
+bool searchDFS(Node *root, int value){
+    // Base case: If the tree is empty or we've reached a leaf node
+    if (root == nullptr) return false;
+
+    // If the node's data is equal to the value we are searching for
+    if (root->data == value) return true;
+
+    // Recursively search in the left and right subtrees
+    bool left_res = searchDFS(root->left, value);
+    bool right_res = searchDFS(root->right, value);
+
+    return left_res || right_res;
+}
+
+int main()
+{
+    Node *root = new Node(2);
+    root->left = new Node(3);
+    root->right = new Node(4);
+    root->left->left = new Node(5);
+    root->left->right = new Node(6);
+
+    int value = 6;
+    if (searchDFS(root, value))
+        cout << value << " is found in the binary tree" << endl;
+    else
+        cout << value << " is not found in the binary tree" << endl;
+
+    return 0;
+}
+
+Output
+6 is found in the binary tree
+4. Deletion in Binary Tree
+Deleting a node from a binary tree means removing a specific node while keeping the tree’s structure. First, we need to find the node that want to delete by traversing through the tree using any traversal method. Then replace the node’s value with the value of the last node in the tree (found by traversing to the rightmost leaf), and then delete that last node. This way, the tree structure won’t be effected. And remember to check for special cases, like trying to delete from an empty tree, to avoid any issues.
+
+Note: There is no specific rule of deletion but we always make sure that during deletion the binary tree proper should be preserved.
+
+Deletion-in-Binary-Tree
+Deletion in Binary Tree
+
+
+
+
+
+
+
+insertion of a node inside a tree:
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left, * right;
+    Node(int d) {
+        data = d;
+        left = right = nullptr;
+    }
+};
+
+// Function to delete a node from the binary tree
+Node* deleteNode(Node* root, int val) {
+    if (root == nullptr) return nullptr; 
+    // Use a queue to perform BFS
+    queue<Node*> q;
+    q.push(root);
+    Node* target = nullptr;
+
+    // Find the target node
+    while (!q.empty()) {
+        Node* curr = q.front();
+        q.pop();
+
+        // Check for current node is the target node to delete
+        if (curr->data == val) {
+            target = curr;
+            break;
+        }
+        // Add children to the queue
+        if (curr->left) q.push(curr->left);
+        if (curr->right) q.push(curr->right);
+    }
+    // If target node is not found, return the original tree
+    if (target == nullptr) return root;
+
+    // Find the deepest rightmost node and its parent
+    pair<Node*, Node*> last = {nullptr, nullptr};
+    queue<pair<Node*, Node*>> q1;
+    q1.push({root, nullptr});
+  
+    while (!q1.empty()) {
+        auto curr = q1.front();
+        q1.pop();
+
+        // Update the last
+        last = curr;
+      
+        if (curr.first->left) 
+          q1.push({curr.first->left, curr.first});
+        if (curr.first->right) 
+          q1.push({curr.first->right, curr.first});
+    }
+
+    Node* lastNode = last.first;
+    Node* lastParent = last.second;
+
+    // Replace target's value with the last node's value
+    target->data = lastNode->data;
+
+    // Remove the last node
+    if (lastParent) {
+        if (lastParent->left==lastNode)lastParent->left = nullptr;
+        else lastParent->right = nullptr;
+        delete lastNode;
+    } else {
+        // If the last node was the root
+        delete lastNode;
+        return nullptr;
+    }
+    return root;  
+}
+
+void inOrder(Node* root) {
+    if (root == nullptr) return;
+    inOrder(root->left);
+    cout << root->data << " ";
+    inOrder(root->right);
+}
+
+int main() {
+    // Creating a simple binary tree
+    Node *root = new Node(2);
+    root->left = new Node(3);
+    root->right = new Node(4);
+    root->left->left = new Node(5);
+    root->left->right = new Node(6);
+
+    cout << "Original tree (in-order): ";
+    inOrder(root);
+
+    int valToDel = 3;
+    root = deleteNode(root, valToDel);
+
+    cout <<"\nTree after deleting " << valToDel << " (in-order): ";
+    inOrder(root);
+    cout << endl;
+
+    return 0;
+}
+
+
+
+
+
+
+
+Output
+Original tree (in-order): 5 3 6 2 4 
+Tree after deleting 3 (in-order): 5 6 2 4 
+
+
+
+DELETION OF A TREE 
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left, * right;
+    Node(int d) {
+        data = d;
+        left = right = nullptr;
+    }
+};
+
+// Function to delete a node from the binary tree
+Node* deleteNode(Node* root, int val) {
+    if (root == nullptr) return nullptr; 
+    // Use a queue to perform BFS
+    queue<Node*> q;
+    q.push(root);
+    Node* target = nullptr;
+
+    // Find the target node
+    while (!q.empty()) {
+        Node* curr = q.front();
+        q.pop();
+
+        // Check for current node is the target node to delete
+        if (curr->data == val) {
+            target = curr;
+            break;
+        }
+        // Add children to the queue
+        if (curr->left) q.push(curr->left);
+        if (curr->right) q.push(curr->right);
+    }
+    // If target node is not found, return the original tree
+    if (target == nullptr) return root;
+
+    // Find the deepest rightmost node and its parent
+    pair<Node*, Node*> last = {nullptr, nullptr};
+    queue<pair<Node*, Node*>> q1;
+    q1.push({root, nullptr});
+  
+    while (!q1.empty()) {
+        auto curr = q1.front();
+        q1.pop();
+
+        // Update the last
+        last = curr;
+      
+        if (curr.first->left) 
+          q1.push({curr.first->left, curr.first});
+        if (curr.first->right) 
+          q1.push({curr.first->right, curr.first});
+    }
+
+    Node* lastNode = last.first;
+    Node* lastParent = last.second;
+
+    // Replace target's value with the last node's value
+    target->data = lastNode->data;
+
+    // Remove the last node
+    if (lastParent) {
+        if (lastParent->left==lastNode)lastParent->left = nullptr;
+        else lastParent->right = nullptr;
+        delete lastNode;
+    } else {
+        // If the last node was the root
+        delete lastNode;
+        return nullptr;
+    }
+    return root;  
+}
+
+void inOrder(Node* root) {
+    if (root == nullptr) return;
+    inOrder(root->left);
+    cout << root->data << " ";
+    inOrder(root->right);
+}
+
+int main() {
+    // Creating a simple binary tree
+    Node *root = new Node(2);
+    root->left = new Node(3);
+    root->right = new Node(4);
+    root->left->left = new Node(5);
+    root->left->right = new Node(6);
+
+    cout << "Original tree (in-order): ";
+    inOrder(root);
+
+    int valToDel = 3;
+    root = deleteNode(root, valToDel);
+
+    cout <<"\nTree after deleting " << valToDel << " (in-order): ";
+    inOrder(root);
+    cout << endl;
+
+    return 0;
+}
+
+
+
+
+
+Advantages of Binary Tree
+Efficient Search: Binary Search Trees (a variation of Binary Tree) are efficient when searching for a specific element, as each node has at most two child nodes when compared to linked list and arrays
+Memory Efficient: Binary trees require lesser memory as compared to other tree data structures, therefore memory-efficient.
+Binary trees are relatively easy to implement and understand as each node has at most two children, left child and right child.
+Disadvantages of Binary Tree
+Limited structure: Binary trees are limited to two child nodes per node, which can limit their usefulness in certain applications. For example, if a tree requires more than two child nodes per node, a different tree structure may be more suitable.
+Unbalanced trees: Unbalanced binary trees, where one subtree is significantly larger than the other, can lead to inefficient search operations. This can occur if the tree is not properly balanced or if data is inserted in a non-random order.
+Space inefficiency: Binary trees can be space inefficient when compared to other data structures like arrays and linked list. This is because each node requires two child references or pointers, which can be a significant amount of memory overhead for large trees.
+Slow performance in worst-case scenarios: In the worst-case scenario, a binary tree can become degenerate or skewed, meaning that each node has only one child. In this case, search operations in Binary Search Tree (a variation of Binary Tree) can degrade to O(n) time complexity, where n is the number of nodes in the tree.
+Applications of Binary Tree
+Binary Tree can be used to represent hierarchical data.
+Huffman Coding trees are used in data compression algorithms.
+Priority Queue is another application of binary tree that is used for searching maximum or minimum in O(1) time complexity.
+Useful for indexing segmented at the database is useful in storing cache in the system,
+Binary trees can be used to implement decision trees, a type of machine learning algorithm used for classification and regression analysis.
+Frequently Asked Questions (FAQs) on Binary Tree
+1. What is a binary tree?
+A binary tree is a non-linear data structure consisting of nodes, where each node has at most two children (left child and the right child).
+
+
+2. What are the types of binary trees?
+Binary trees can be classified into various types, including full binary trees, complete binary trees, perfect binary trees, balanced binary trees (such as AVL trees and Red-Black trees), and degenerate (or pathological) binary trees.
+
+
+3. What is the height of a binary tree?
+The height of a binary tree is the length of the longest path from the root node to a leaf node. It represents the number of edges in the longest path from the root node to a leaf node.
+
+
+4. What is the depth of a node in a binary tree?
+The depth of a node in a binary tree is the length of the path from the root node to that particular node. The depth of the root node is 0.
+
+
+5. How do you perform tree traversal in a binary tree?
+Tree traversal in a binary tree can be done in different ways: In-order traversal, Pre-order traversal, Post-order traversal, and Level-order traversal (also known as breadth-first traversal).
+
+
+6. What is an Inorder traversal in Binary Tree?
+In Inorder traversal, nodes are recursively visited in this order: left child, root, right child. This traversal results in nodes being visited in non-decreasing order in a binary search tree.
+
+
+7. What is a Preorder traversal in Binary Tree?
+In Preorder traversal, nodes are recursively visited in this order: root, left child, right child. This traversal results in root node being the first node to be visited.
+
+
+8. What is a Postorder traversal in Binary Tree?
+In Postorder traversal, nodes are recursively visited in this order: left child, right child and root. This traversal results in root node being the last node to be visited.
+
+
+9. What is the difference between a Binary Tree and a Binary Search Tree?
+A binary tree is a hierarchical data structure where each node has at most two children, whereas a binary search tree is a type of binary tree in which the left child of a node contains values less than the node’s value, and the right child contains values greater than the node’s value.
+
+
+10. What is a balanced binary tree?
+A balanced binary tree is a binary tree in which the height of the left and right subtrees of every node differ by at most one. Balanced trees help maintain efficient operations such as searching, insertion, and deletion with time complexities close to O(log n).
+
